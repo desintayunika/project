@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desinta yunika | Portofolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="bg"></canvas>
+    <header>
+        <nav>
+            <a href="#Home">Home</a>
+            <a href="#About">About</a>
+            <a href="#Projects">Projects</a>
+            <a href="#Contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+       <section id="about" class="about">
+            <div class="about-name">
+                <h2><span class="grad">Hi, I'm</span><br>Desinta Yunika</h2>
+                <a href="#" class="btn btn-primary">View Resume</a>
+            </div>
+
+            <img src="desinta.png" alt="Foto Desinta Yunika" class="about-photo">
+
+            <div class="about-text">
+                <p class="muted">Sebagai mahasiswa Fakultas Ilmu Komputer Universitas Dharmas Indonesia, aku berfokus pada pengembangan teknologi yang fungsional dan menarik.</p>
+                <a href="#projects">View Projects</a>
+            </div>
+        </section>
+
+        <!--EDUCATION & EXPERIENCE-->
+        <section class="timeline">
+            <div>
+                <h3>Education</h3>
+                <article class="glass item">
+                    <img src="kampus.png" alt="Universitas Dharmas Indonesia">
+                    <div>
+                        <h4>Universitas Dharmas Indonesia</h4>
+                        <p>Teknik Informatika</p>
+                        <small>2023 - Sekarang</small>
+                    </div>
+                </article>
+            </div>
+            <div>
+                <article class="glass item">
+                    <img src="ponpes.png" alt="Pondok Pesantren Aswaja">
+                    <div>
+                        <h4>Pondok Pesantren Aswaja</h4>
+                        <p>Multimedia</p>
+                        <small>2021 - 2023</small>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- STATSTIK -->
+         <section id="Projects">
+            <h2>Portofolio</h2>
+
+            <div class="tabs">
+                <button class="tab active" data-panel="p-projects">Projects</button>
+                <button class="tab" data-panel="p-certs">Certificates</button>
+                <button class="tab" data-panel="p-awards">Awards</button>
+                <button class="tab" data-panel="p-stack">Tech Stack</button>
+            </div>
+
+            <div id="p-projects" class="panel active">
+                <article class="glass card">
+                    <img src="img/portofolio.png" alt="Tampilan Project 1">
+                    <h3>Portofolio</h3>
+                    <p>Website portofolio pribadi yang menampilkan proyek-proyek dan pencapaian saya.</p>
+                    <a href="https://desintayunika.github.io/portofolio/" target="_blank">View Project</a>
+                </article>
+                <!-- salin <article> untuk proyek lain-->
+            </div>
+            <div id="p-certs" class="panel">Isi sertifikat...</div>
+            <div id="p-awards" class="panel">Isi penghargaan...</div>
+            <div id="p-stack" class="panel">HTML, CSS, JavaScript,Python...</div>
+         </section>
+    </main>
+
+    <script>
+
+    // 2. Teks diketik
+    const elKetik = document.getElementById('typing');
+    if (elKetik) {
+        const teks = "IT Edu Student";
+        let i = 0;
+        (function ketik() {
+        if (i < teks.length) { elKetik.textContent += teks[i++]; setTimeout(ketik, 100); }
+        })();
+    }
+
+    // 3. Pindah tab
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.panel).classList.add('active');
+    }));
+
+    // 4. Angka naik saat statistik terlihat
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const tujuan = +el.dataset.target;
+        let n = 0;
+        const timer = setInterval(() => {
+            el.textContent = ++n;
+            if (n >= tujuan) clearInterval(timer);
+        }, 150);
+        obs.unobserve(el);
+        });
+    });
+    document.querySelectorAll('[data-target]').forEach(el => obs.observe(el));
+
+    const muncul = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('show'); muncul.unobserve(e.target); }
+        });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.reveal').forEach(el => muncul.observe(el));
+    </script>
+    
+</body>
+</html>

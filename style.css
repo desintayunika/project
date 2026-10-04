@@ -1,0 +1,125 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: #4a1d33;
+  background: linear-gradient(160deg, #ffe4ec, #fff5f8 60%, #ffeaf2);
+  background-attachment: fixed;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+section { padding: 80px 8%; position: relative; z-index: 1; }
+h1, h2, h3, h4, p { margin-top: 0; }
+a { color: #db2777; }
+.muted, .desc, .item p, .item small { color: #8a5a70; line-height: 1.7; }
+
+/* Kaca putih lembut */
+.glass {
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(236,72,153,.25);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(236,72,153,.12);
+  backdrop-filter: blur(10px);
+}
+.grad {
+  background: linear-gradient(90deg, #ec4899, #f472b6);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* Tombol */
+.btn { display: inline-block; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+.btn-primary { background: #ec4899; color: #fff; }
+.btn-ghost, .btn-secondary { color: #db2777; border: 1px solid rgba(236,72,153,.5); }
+
+/* Navbar */
+header nav {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 10; display: flex; gap: 4px; padding: 8px;
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(236,72,153,.25);
+  border-radius: 999px; backdrop-filter: blur(10px);
+}
+header nav a { color: #4a1d33; text-decoration: none; padding: 8px 14px; border-radius: 999px; }
+header nav a:hover { background: rgba(236,72,153,.15); }
+
+/* About */
+.about {
+  display: grid;
+  grid-template-columns: 1fr 260px 1fr;
+  align-items: center; gap: 32px;
+  min-height: 100vh; padding-top: 110px;
+}
+.about h2 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; }
+.about-photo {
+  width: 260px; height: 330px;
+  object-fit: cover; object-position: top;
+  border-radius: 24px;
+  border: 3px solid rgba(236,72,153,.5);
+  box-shadow: 0 12px 30px rgba(236,72,153,.3);
+  display: block;
+}
+
+/* Education */
+.timeline { display: grid; grid-template-columns: 1fr; gap: 32px; max-width: 600px; margin: 0 auto; }
+.item { display: flex; gap: 14px; align-items: center; padding: 14px 18px; margin-top: 12px; }
+.item img { width: 48px; height: 48px; object-fit: contain; }
+.item h4, .item p { margin: 0; }
+
+/* Muncul saat scroll */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.show { opacity: 1; transform: none; }
+
+/* Statistik */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.stat { padding: 20px; text-align: center; }
+.stat strong { display: block; font-size: 2.2rem; }
+
+/* Tab portfolio */
+.tabs { display: flex; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+.tab { flex: 1; min-width: 110px; padding: 12px; cursor: pointer; background: transparent; color: #4a1d33; border: 1px solid rgba(236,72,153,.3); border-radius: 12px; font: inherit; }
+.tab.active { background: #ec4899; border-color: #ec4899; color: #fff; }
+.panel { display: none; }
+.panel.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.card { padding: 14px; transition: transform .3s; }
+.card:hover { transform: translateY(-6px); }
+.card img { width: 100%; border-radius: 10px; }
+
+footer { position: relative; z-index: 1; text-align: center; padding: 30px; color: #b07a94; }
+
+/* Hiasan: cahaya pink dan jaring di pojok */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(244,114,182,.35), transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(236,72,153,.25), transparent 45%);
+  animation: napas 8s ease-in-out infinite alternate;
+}
+@keyframes napas { from { opacity: .6; } to { opacity: 1; } }
+body::before {
+  content: ""; position: fixed; top: 0; right: 0; width: 180px; height: 180px;
+  background:
+    repeating-conic-gradient(from 0deg at 100% 0%, transparent 0 9deg, rgba(236,72,153,.18) 9deg 10deg),
+    repeating-radial-gradient(circle at 100% 0%, transparent 0 28px, rgba(236,72,153,.18) 28px 29px);
+  -webkit-mask: radial-gradient(circle at 100% 0%, #000 60%, transparent 100%);
+  mask: radial-gradient(circle at 100% 0%, #000 60%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+
+/* HP */
+@media (max-width: 760px) {
+  .about { grid-template-columns: 1fr; min-height: auto; }
+  .about-photo { margin: 0 auto; }
+  .stats { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  body::after { animation: none; }
+}
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+}
+.about-name  { grid-column: 1; grid-row: 1; }
+.about-photo { grid-column: 2; grid-row: 1; }
+.about-text  { grid-column: 3; grid-row: 1; }
+.about .muted { max-width: none; }
