@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="intro" aria-label="Welcome To My Portofolio Website">
+        <canvas id="introCv"></canvas>
+        <div class="loader">
+            <div class="loader-row"><span>Loading</span><span id="persen">0%</span></div>
+            <div class="bar"><i id="barIsi"></i></div>
+        </div>
+    </div>
     <canvas id="bg"></canvas>
     <header>
         <nav>
@@ -24,7 +31,7 @@
                 <a href="#" class="btn btn-primary">View Resume</a>
             </div>
 
-            <img src="desinta.png" alt="Foto Desinta Yunika" class="about-photo">
+            <img src="image/desinta.png" alt="Foto Desinta Yunika" class="about-photo">
 
             <div class="about-text">
                 <p class="muted">Sebagai mahasiswa Fakultas Ilmu Komputer Universitas Dharmas Indonesia, aku berfokus pada pengembangan teknologi yang fungsional dan menarik.</p>
@@ -37,7 +44,7 @@
             <div>
                 <h3>Education</h3>
                 <article class="glass item">
-                    <img src="kampus.png" alt="Universitas Dharmas Indonesia">
+                    <img src="image/kampus.png" alt="Universitas Dharmas Indonesia">
                     <div>
                         <h4>Universitas Dharmas Indonesia</h4>
                         <p>Teknik Informatika</p>
@@ -47,7 +54,7 @@
             </div>
             <div>
                 <article class="glass item">
-                    <img src="ponpes.png" alt="Pondok Pesantren Aswaja">
+                    <img src="image/ponpes.png" alt="Pondok Pesantren Aswaja">
                     <div>
                         <h4>Pondok Pesantren Aswaja</h4>
                         <p>Multimedia</p>
@@ -70,12 +77,10 @@
 
             <div id="p-projects" class="panel active">
                 <article class="glass card">
-                    <img src="img/portofolio.png" alt="Tampilan Project 1">
-                    <h3>Portofolio</h3>
-                    <p>Website portofolio pribadi yang menampilkan proyek-proyek dan pencapaian saya.</p>
-                    <a href="https://desintayunika.github.io/portofolio/" target="_blank">View Project</a>
+                    <h3>Website Portofolio</h3>
+                    <p class="muted">Website pribadi untuk menampilkan proyek dan pencapaianku.</p>
+                    <a href="https://github.com/desintayunika/project" target="_blank" rel="noopener">View Project →</a>
                 </article>
-                <!-- salin <article> untuk proyek lain-->
             </div>
             <div id="p-certs" class="panel">Isi sertifikat...</div>
             <div id="p-awards" class="panel">Isi penghargaan...</div>
@@ -127,6 +132,281 @@
         });
     }, { threshold: 0.2 });
     document.querySelectorAll('.reveal').forEach(el => muncul.observe(el));
+    // Bintang pink bergerak + petir pink
+(function () {
+  const cv = document.getElementById('bg');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  let W, H;
+  function resize() {
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  const WARNA = ['#ec4899', '#f472b6', '#db2777', '#f9a8d4'];
+  const diam = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- BINTANG ---
+  const jumlah = Math.min(90, Math.floor(innerWidth / 14));
+  const bintang = Array.from({ length: jumlah }, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    r: 1 + Math.random() * 2,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: (Math.random() - 0.5) * 0.15,
+    fase: Math.random() * 6.28,
+    laju: 0.01 + Math.random() * 0.03,
+    warna: WARNA[Math.floor(Math.random() * WARNA.length)]
+  }));
+
+  // --- PETIR ---
+  let petir = null;
+  function buatPetir() {
+    const garis = [];
+    function cabang(x, y, sudut, panjang, tebal) {
+      const pts = [[x, y]];
+      const langkah = Math.floor(panjang / 18);
+      for (let i = 0; i < langkah; i++) {
+        sudut += (Math.random() - 0.5) * 0.9;      // belok acak = bentuk zigzag
+        x += Math.cos(sudut) * 18;
+        y += Math.sin(sudut) * 18;
+        pts.push([x, y]);
+        if (tebal > 1.2 && Math.random() < 0.08) {   // kadang bercabang
+          cabang(x, y, sudut + (Math.random() - 0.5) * 1.4, panjang * 0.4, tebal * 0.6);
+        }
+      }
+      garis.push({ pts, tebal });
+    }
+    cabang(W * (0.15 + Math.random() * 0.7), -10, Math.PI / 2, H * 0.7, 3);
+    petir = { garis, umur: 0, durasi: 18 };
+  }
+
+  function gambarPetir() {
+    const t = petir.umur / petir.durasi;
+    const alpha = t < 0.15 ? 1 : 1 - (t - 0.15) / 0.85;
+    if (t < 0.12) {                                  // kilatan cahaya sesaat
+      ctx.fillStyle = 'rgba(255,255,255,' + 0.25 * (1 - t / 0.12) + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    petir.garis.forEach(g => {
+      ctx.beginPath();
+      g.pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+      ctx.shadowColor = '#ec4899';
+      ctx.shadowBlur = 18;
+      ctx.strokeStyle = 'rgba(236,72,153,' + alpha + ')';   // lapisan pink + glow
+      ctx.lineWidth = g.tebal * 2;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(255,255,255,' + alpha + ')';  // inti putih
+      ctx.lineWidth = g.tebal * 0.6;
+      ctx.stroke();
+    });
+    petir.umur++;
+    if (petir.umur > petir.durasi) petir = null;
+  }
+
+  // --- LOOP ---
+  let hitung = 120 + Math.random() * 300;
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+
+    bintang.forEach(b => {
+      if (!diam) {
+        b.x += b.vx; b.y += b.vy; b.fase += b.laju;
+        if (b.x < 0) b.x = W; if (b.x > W) b.x = 0;
+        if (b.y < 0) b.y = H; if (b.y > H) b.y = 0;
+      }
+      ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(b.fase));
+      ctx.fillStyle = b.warna;
+      ctx.shadowColor = b.warna;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, 6.283);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+
+    if (!diam) {
+      if (petir) gambarPetir();
+      else if (--hitung <= 0) { buatPetir(); hitung = 240 + Math.random() * 420; }
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+    // Pembukaan: butiran menyebar -> membentuk tulisan + petir pink
+(function () {
+  const intro = document.getElementById('intro');
+  if (!intro) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { intro.remove(); return; }
+
+  document.body.classList.add('kunci');
+  const cv = document.getElementById('introCv');
+  const ctx = cv.getContext('2d');
+  const elPersen = document.getElementById('persen');
+  const elBar = document.getElementById('barIsi');
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  const BENTUK = 3000;   // ms: butiran menyebar lalu membentuk tulisan
+  const TAHAN  = 3000;   // ms: tulisan diam dan bisa dibaca (ubah ini)
+  const AKHIR  = 600;    // ms: kilatan penutup
+  const DURASI = BENTUK + TAHAN + AKHIR;
+  let W, H, butir = [], petir = null, gantiPetir = 0, persenLama = -1;
+
+  // Ambil titik-titik dari bentuk huruf
+  function ambilTitik() {
+    const tmp = document.createElement('canvas');
+    tmp.width = W; tmp.height = H;
+    const t = tmp.getContext('2d');
+    t.textAlign = 'center'; t.textBaseline = 'middle';
+
+    t.font = 'bold 100px "Segoe UI", sans-serif';
+    const lebar100 = t.measureText('Portofolio Website').width;
+    const ukuran = Math.min(64, 100 * (W * 0.86) / lebar100);   // pas di layar, maks 64px
+    const gap = Math.max(2, Math.round(ukuran / 22));            // jarak antar titik
+    t.font = 'bold ' + ukuran + 'px "Segoe UI", sans-serif';
+
+    const baris = [
+      { teks: 'Welcome To My',      y: H / 2 - ukuran * 0.75, w: ['#ffffff', '#fce7f3', '#f9a8d4'] },
+      { teks: 'Portofolio Website', y: H / 2 + ukuran * 0.55, w: ['#f472b6', '#ec4899', '#f9a8d4'] }
+    ];
+    const hasil = [];
+    baris.forEach(b => {
+      t.clearRect(0, 0, W, H);
+      t.fillStyle = '#fff';
+      t.fillText(b.teks, W / 2, b.y);
+      const data = t.getImageData(0, 0, W, H).data;
+      for (let y = 0; y < H; y += gap) {
+        for (let x = 0; x < W; x += gap) {
+          if (data[(y * W + x) * 4 + 3] > 128)
+            hasil.push({ x, y, warna: b.w[Math.floor(Math.random() * b.w.length)] });
+        }
+      }
+    });
+    return { hasil, r: gap * 0.5 + 0.3 };
+  }
+
+  function siapkan() {
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const { hasil, r } = ambilTitik();
+    butir = hasil.map(p => ({
+      sx: Math.random() * W, sy: Math.random() * H,   // awal: tersebar acak
+      tx: p.x, ty: p.y,                                // tujuan: posisi huruf
+      warna: p.warna, r: r,
+      tunda: Math.random() * 500,
+      fase: Math.random() * 6.28
+    }));
+  }
+  siapkan();
+  addEventListener('resize', siapkan);
+
+  // Petir zigzag dari atas ke bawah
+  function buatPetir() {
+    const garis = [];
+    function cabang(x, y, sudut, panjang, tebal) {
+      const pts = [[x, y]];
+      const n = Math.floor(panjang / 16);
+      for (let i = 0; i < n; i++) {
+        sudut += (Math.random() - 0.5) * 0.8;
+        if (tebal >= 3) sudut += (Math.PI / 2 - sudut) * 0.12;
+        x += Math.cos(sudut) * 16;
+        y += Math.sin(sudut) * 16;
+        pts.push([x, y]);
+        if (tebal > 1.5 && Math.random() < 0.07)
+          cabang(x, y, sudut + (Math.random() - 0.5) * 1.6, panjang * 0.35, tebal * 0.55);
+      }
+      garis.push({ pts, tebal });
+    }
+    cabang(W / 2 + (Math.random() - 0.5) * 60, -10, Math.PI / 2, H * 1.1, 3.5);
+    return garis;
+  }
+  function gambarPetir(garis, alpha) {
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    garis.forEach(g => {
+      ctx.beginPath();
+      g.pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+      ctx.shadowColor = '#ec4899'; ctx.shadowBlur = 22;
+      ctx.strokeStyle = 'rgba(236,72,153,' + alpha + ')';
+      ctx.lineWidth = g.tebal * 2; ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(255,255,255,' + alpha + ')';
+      ctx.lineWidth = g.tebal * 0.6; ctx.stroke();
+    });
+  }
+
+  const mulai = performance.now();
+  let berhenti = false;
+  function selesai() {
+    if (berhenti) return;
+    berhenti = true;
+    intro.classList.add('hilang');
+    document.body.classList.remove('kunci');
+    setTimeout(() => intro.remove(), 300);
+  }
+  intro.addEventListener('click', selesai);   // klik untuk lewati
+
+  const mudah = p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+
+  function frame(now) {
+    if (berhenti) return;
+    const t = Math.min((now - mulai) / 5000, 1);
+    ctx.clearRect(0, 0, W, H);
+
+    // Butiran: tersebar -> tersedot membentuk tulisan
+    butir.forEach(b => {
+      const p = Math.max(0, Math.min(1, (now - mulai - 300 - b.tunda) / (BENTUK - 800)));
+      const e = mudah(p);
+      let x = b.sx + (b.tx - b.sx) * e;
+      let y = b.sy + (b.ty - b.sy) * e;
+      if (p >= 1) { x += Math.sin(now / 250 + b.fase) * 0.4; y += Math.cos(now / 250 + b.fase) * 0.4; }
+      ctx.globalAlpha = p >= 1 ? 0.95 : 0.4 + 0.6 * Math.abs(Math.sin(now / 300 + b.fase));
+      ctx.fillStyle = b.warna;
+      ctx.fillRect(x - b.r, y - b.r, b.r * 2, b.r * 2);
+    });
+    ctx.globalAlpha = 1;
+
+    // Petir menyambar selama tulisan terbentuk
+    if (now - mulai > 500 && now - mulai < DURASI - AKHIR) {
+      if (now - gantiPetir > 380) { petir = buatPetir(); gantiPetir = now; }
+      gambarPetir(petir, 0.35 + 0.65 * Math.random());
+    }
+
+    // Loading
+    const persen = Math.floor(t * 100);
+    if (persen !== persenLama) {
+      elPersen.textContent = persen + '%';
+      elBar.style.width = persen + '%';
+      persenLama = persen;
+    }
+
+    // Kilatan di akhir
+    const sisa = now - mulai - (DURASI - AKHIR);
+    if (sisa > 0) {
+     ctx.fillStyle = 'rgba(255,214,235,' + Math.min(1, sisa / AKHIR) + ')';
+  ctx.fillRect(0, 0, W, H);
+}
+
+    if (t >= 1) { selesai(); return; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+    // Pindah tab
+    const tabBtn = document.querySelectorAll('.tab');
+    const panelBox = document.querySelectorAll('.panel');
+    tabBtn.forEach(tab => tab.addEventListener('click', () => {
+        tabBtn.forEach(t => t.classList.remove('active'));
+        panelBox.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.panel).classList.add('active');
+    }));
     </script>
     
 </body>
