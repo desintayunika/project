@@ -197,3 +197,13 @@ body.kunci { overflow: hidden; }
 .bar i { display: block; height: 100%; width: 0; background: #f472b6; }
 #intro { animation: introAman 0s 8s forwards; }
 @keyframes introAman { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+@media (max-width: 768px) {
+  .about {
+    flex-direction: column;
+    text-align: center;
+  }
+  .about img {
+    max-width: 100%;
+    height: auto;
+  }
+}
